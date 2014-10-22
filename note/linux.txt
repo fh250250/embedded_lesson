@@ -1,0 +1,14 @@
+递归创建目录，a，b为平级目录
+mkdir -p abc/{a,b}
+
+挂载镜像
+mount -o loop [*.iso ] [mount point]
+
+在 / 下查找文件
+find / -iname 文件名
+
+生成静态库
+ar cqs libfun.a fun.o 
+
+生成动态库
+gcc -shared -Wall -fPIC fun.o -o libfun.so

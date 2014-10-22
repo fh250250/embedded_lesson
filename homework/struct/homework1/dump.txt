@@ -1,0 +1,5 @@
+id: 5, age: 23, sex: F, name: bruce
+id: 4, age: 24, sex: F, name: fred
+id: 3, age: 22, sex: M, name: jack
+id: 2, age: 21, sex: M, name: alex
+id: 1, age: 22, sex: F, name: galina
