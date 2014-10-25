@@ -71,7 +71,7 @@ int main(int argc, char const *argv[])
 	show_last(root);
 	printf("\n");
 	printf("非递归后序 : ");
-	show_last_n(root);	
+	show_last_n(root);
 
 	return 0;
 }
