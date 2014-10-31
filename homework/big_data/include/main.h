@@ -3,6 +3,7 @@
 
 
 #include "../include/misc.h"
+#include "../include/console_ui.h"
 
 
 #endif

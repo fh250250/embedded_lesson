@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
 	int number = 0;
 
 	printf("Please Input a string> ");
-	gets(pStr);
+	fgets(str, sizeof(str), stdin);
 
 	while(*pStr != '\0'){
 		

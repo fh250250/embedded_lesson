@@ -2,7 +2,7 @@
 
 int main(int argc, char const *argv[])
 {
-	build("/home/alex/embedded_lesson/c/");
+	console_run(argc, argv);
 
 	return 0;
 }

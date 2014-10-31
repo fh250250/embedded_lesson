@@ -2,17 +2,119 @@
 
 
 
-conflict_node** build(const char* dirname){
-
+conflict_node** build_to_ram(const char* dirname){
 	conflict_node** hash_table = create_hash_table();
 
-	// 遍历目录 并构建
-	walk_tree(dirname, hash_table);
+	Extra extra;
+	extra.data = hash_table;
+	extra.func = build_to_ram_call_back;
+
+	walk_tree(dirname, &extra);
 
 	return hash_table;
 }
 
-void walk_tree(const char* dirname, conflict_node** hash_table){
+
+void build_to_ram_call_back(const char* word,
+				 			const char* file_name, 
+				 			unsigned int lines, 
+				 			void* data){
+	conflict_node** hash_table = (conflict_node**)data;
+
+	unsigned int slot = hash_func(word);
+	conflict_node* node = NULL;
+	conflict_node* cur = NULL;
+	index_node* pIndex = NULL;
+
+
+	if(*(hash_table + slot) == NULL){	// 当前槽还没有冲突
+
+		node = create_conflict_node(word);
+		pIndex = create_index_node(file_name, lines);
+
+		node->index = pIndex;
+
+		*(hash_table + slot) = node;
+
+	}else {		// 当前槽有冲突
+
+		cur = *(hash_table + slot);
+
+		while(cur){
+			if(strcmp(cur->word, word) == 0){ // 只用再添加索引
+				pIndex = create_index_node(file_name, lines);
+
+				pIndex->next = cur->index;
+				cur->index = pIndex;
+
+				return;
+			}
+
+			cur = cur->next;
+		}
+
+		// 在头部添加
+		node = create_conflict_node(word);
+		pIndex = create_index_node(file_name, lines);
+
+		node->index = pIndex;
+
+		node->next = *(hash_table + slot);
+		*(hash_table + slot) = node;
+	}
+}
+
+
+
+
+
+void build_to_disk(const char* dirname){
+
+	char* name_buff = malloc(sizeof(char) * (strlen(dirname) + strlen("sym.tags") + 1));
+	if(name_buff == NULL){
+		perror("allocate mem failure\n");
+		exit(-1);
+	}
+
+	strcpy(name_buff, dirname);
+	strcat(name_buff, "sym.tags");
+
+	FILE* out_file = fopen(name_buff, "w");
+	if(!out_file){
+		printf("打开文件\"%s\"失败\n", name_buff);
+		return;
+	}
+
+	Extra extra;
+	extra.data = out_file;
+	extra.func = build_to_disk_call_back;
+
+	// 遍历目录 并构建
+	walk_tree(dirname, &extra);
+
+
+
+	if(name_buff){
+		free(name_buff);
+	}
+
+	fclose(out_file);
+}
+
+
+
+void build_to_disk_call_back(const char* word,
+				 			const char* file_name, 
+				 			unsigned int lines, 
+				 			void* data){
+	fprintf((FILE*)data, "%s:%u:%s:%u\n", 
+		file_name, lines, word, hash_func(word));
+}
+
+
+
+
+void walk_tree(const char* dirname, Extra* extra){
 
 	// 初始化栈,并压入第一个目录
 	dname_node* stack = initStack();
@@ -52,7 +154,8 @@ void walk_tree(const char* dirname, conflict_node** hash_table){
 					push_stack(stack, name_buff);
 				}
 			}else {	// 处理文件
-				analyze_file(name_buff, hash_table);
+				if(strcmp(ptr->d_name, "sym.tags"))
+					analyze_file(name_buff, extra);
 			}
 
 
@@ -80,7 +183,7 @@ void walk_tree(const char* dirname, conflict_node** hash_table){
 
 
 
-void analyze_file(const char* file_name, conflict_node** hash_table){
+void analyze_file(const char* file_name, Extra* extra){
 	FILE* file = fopen(file_name, "r");
 	char* line_buff;
 	unsigned int lines;
@@ -100,7 +203,7 @@ void analyze_file(const char* file_name, conflict_node** hash_table){
 
 	// 逐行分析
 	for(lines = 1; fgets(line_buff, MAX_LINE_LEN, file); lines++){
-		deal_with_line(line_buff, lines, file_name, hash_table);
+		deal_with_line(line_buff, lines, file_name, extra);
 	}
 
 
@@ -112,7 +215,7 @@ void analyze_file(const char* file_name, conflict_node** hash_table){
 
 
 void deal_with_line(char* line_buff, unsigned int lines, 
-					const char* file_name, conflict_node** hash_table){
+					const char* file_name, Extra* extra){
 	char* word;
 	char* delim = DELIM;	// 分隔符
 	char* p;
@@ -122,66 +225,11 @@ void deal_with_line(char* line_buff, unsigned int lines,
 
 		if(!word) break;
 
-		add_word_to_hash_table(word, hash_table, file_name, lines);
+		// 调用自定义函数
+		extra->func(word, file_name, lines, extra->data);
 	}
 }
 
-
-void add_word_to_hash_table(const char* word, conflict_node** hash_table, 
-							const char* file_name, 
-							unsigned int lines){
-
-	// hash掉单词,并找到对应的槽
-	conflict_node* conflict_chain = *(hash_table + hash_func(word));
-
-
-	conflict_node* node = NULL;
-	conflict_node* cur = NULL;
-	index_node* pIndex = NULL;
-
-
-	// printf("\"%s\":%u:%s\n", file_name, lines, word);
-
-
-
-
-	if(conflict_chain == NULL){ // 当前槽还没有冲突
-
-		// 冲突节点
-		node  = create_conflict_node(word);
-		pIndex = create_index_node(file_name, lines);
-
-		node->index = pIndex;
-
-		conflict_chain = node;
-
-
-	}else {		// 当前槽有冲突
-		cur = conflict_chain;
-
-		while(cur != NULL){
-			if(strcmp(cur->word, word) == 0){
-				// 只用再追加索引
-				// 到索引链的头部
-				pIndex = create_index_node(file_name, lines);
-				pIndex->next = cur->index;
-				cur->index = pIndex;
-				
-				return;
-			}
-
-			cur = cur->next;
-		}
-
-		// 在头部插入一个新的
-		node  = create_conflict_node(word);
-		pIndex = create_index_node(file_name, lines);
-
-		node->index = pIndex;
-		node->next = conflict_chain;
-		conflict_chain = node;
-	}
-}
 
 
 unsigned int hash_func(const char* word){
@@ -192,6 +240,29 @@ unsigned int hash_func(const char* word){
 		sum += *p;
 	}
 
-	return sum % HASH_TABLE_LEN;
+	return (sum * 100 + 300) % HASH_TABLE_LEN;
 }
+
+
+
+conflict_node* find_word(const char* word, conflict_node** hash_table){
+
+	conflict_node* conflict_chain = *(hash_table + hash_func(word));
+	conflict_node* cur = NULL;
+
+	if(conflict_chain){
+		cur = conflict_chain;
+
+		while(cur != NULL){
+			if(strcmp(cur->word, word) == 0){
+				return cur;
+			}
+
+			cur = cur->next;
+		}
+	}
+
+	return NULL;
+}
+
 

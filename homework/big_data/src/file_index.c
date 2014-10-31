@@ -16,6 +16,8 @@ index_node* create_index_node(const char* file_name, unsigned int lines){
 		exit(-1);
 	}
 
+	strcpy(fname, file_name);
+
 	pIndex->file_name = fname;
 	pIndex->lines = lines;
 	pIndex->next = NULL;
