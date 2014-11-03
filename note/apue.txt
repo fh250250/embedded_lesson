@@ -1,0 +1,26 @@
+Unix 环境高级编程
+
+IO
+	标准io   fopen fread fwrite printf scanf ...
+	系统io   open read write ...
+	高级io   
+
+
+文件属性 目录操作
+
+进程环境
+
+进程属性
+
+信号
+
+线程
+
+进程间通信
+	管道    有名管道 无名管道
+	XSI     共享内存 消息队列 信号量
+	inet    tcp udp ...
+
+
+
+
