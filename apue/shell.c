@@ -23,9 +23,8 @@ int main(int argc, char const *argv[])
 		i = 0;
 		while((tok = strsep(&pbuff, " ")) != NULL){
 			if(*tok){
-				arg[i] = tok;
+				arg[i++] = tok;
 			}
-			i++;
 		}
 		arg[i] = NULL;
 
@@ -39,7 +38,11 @@ int main(int argc, char const *argv[])
 		}
 
 		if(pid == 0){
-			execvp(arg[0], arg);
+
+			if(execvp(arg[0], arg) < 0){
+				perror("execvp");
+				exit(1);
+			}
 
 			exit(0);
 		}else {
