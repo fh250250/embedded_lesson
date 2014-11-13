@@ -29,7 +29,7 @@ int main(){
 		
 		int fd;
 		
-		if((fd =open("/dev/null", O_RDWR)) == -1){
+		if((fd = open("/dev/null", O_RDWR)) == -1){
 			perror("open");
 			exit(1);
 		}
@@ -41,6 +41,7 @@ int main(){
 			perror("dup2");
 			exit(1);
 		}
+		close(fd);
 
 		FILE* fp = fopen("/tmp/file.log", "w");
 		if(fp == NULL){
