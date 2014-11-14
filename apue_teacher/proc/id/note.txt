@@ -1,0 +1,91 @@
+
+进程的创建
+pid_t fork(void)
+调用成功 返回两个值
+	>0 父进程，返回值为子进程的id
+	=0 子进程
+失败-1
+	子进程 getpid获取当前进程id getppid获取其父进程id
+	父进程
+只能通过getpid获取当前进程id，因为一个父进程可以有多个子进程，所以只能通过fork返回
+
+获取当前进程的进程id
+getpid()
+pid_t getpid(void)
+
+获取父进程的进程id
+getppid
+pid_t getppid(void);
+
+进程的特点
+	子进程继承父进程的地址空间
+	父子进程数据空间相互独立，共享文件指针
+
+僵尸进程:子进程终止，父进程仍在执行，并且没有为该子进程收尸
+					
+孤儿进程:父进程终止，子进程继续执行
+					被init进程收养
+
+父进程为子进程收尸
+1.父进程终止，为其所有子进程收尸
+2.wait/waitpid
+
+为子进程收尸
+wait
+pid_t wait(int *status);
+参数：
+			status==NULL 不关心子进程的退出状态
+			status!=NULL 
+					WIFEXITED(status)	如果子进程正常退出，返回真，否则假
+					WIFSIGNALED(status) 如果子进程非正常退出，返回真，否则假
+
+返回值
+	成功：为其收尸的子进程id	
+	失败：-1
+
+创建200个进程判断 
+	20000--20200之间的素数
+	如果是素数 打印输出
+	
+for( ; ; ){
+	fork()
+
+	pid == 0{
+		if(pimer())	
+			printf();
+		exit(0);
+	}
+
+	wait(NULL);
+
+}
+
+waippid
+pid_t waitpid(pid_t pid, int *status, int options);
+参数：
+	pid:为指定的进程收尸
+				<-1 |pid|==进程组id
+				=-1 为任意子进程收尸
+				=0  为组id等于调用进程组id
+				>0  为进程id 为pid的进程收尸
+	status:返回子进程的退出状态
+					NULL-->不关心退出状态
+
+	options
+				WNOHANG：不等待子进程结束，立即返回
+
+vfork与fork的区别
+1.fork父子进程执行顺序由系统调度产生，执行顺序不确定
+	vfork子进程先执行，父进程后执行
+2.fork父子进程空间独立
+	vfork共享数据空间
+
+
+
+
+
+
+
+
+
+

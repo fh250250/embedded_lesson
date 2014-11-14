@@ -1,0 +1,103 @@
+
+文件属性和目录操作
+
+1.文件属性
+
+获取文件属性
+
+int stat(const char *path, struct stat *buf);
+
+struct stat buf;
+
+struct stat {
+   dev_t     st_dev;     /* ID of device containing file */
+   ino_t     st_ino;     /* inode number */
+   mode_t    st_mode;    /* protection */
+   nlink_t   st_nlink;   /* number of hard links */
+   uid_t     st_uid;     /* user ID of owner */
+   gid_t     st_gid;     /* group ID of owner */
+   dev_t     st_rdev;    /* device ID (if special file) */
+   off_t     st_size;    /* total size, in bytes */
+   blksize_t st_blksize; /* blocksize for file system I/O */
+   blkcnt_t  st_blocks;  /* number of 512B blocks allocated */
+   time_t    st_atime;   /* time of last access */
+   time_t    st_mtime;   /* time of last modification */
+   time_t    st_ctime;   /* time of last status change */
+      };
+
+1 读写权限的获取
+
+
+2 uid gid转换成对应的 用户名和组名
+	uid--> uname --> getpwuid
+	gid--> gname --> getgrgid
+
+同过用户id获取用户的一些信息
+struct passwd *getpwuid(uid_t uid);
+
+struct passwd {
+         char   *pw_name;       /* username */
+         char   *pw_passwd;     /* user password */
+         uid_t   pw_uid;        /* user ID */
+         gid_t   pw_gid;        /* group ID */
+         char   *pw_gecos;      /* real name */
+         char   *pw_dir;        /* home directory */
+         char   *pw_shell;      /* shell program */
+     };
+
+
+3 将时间的秒数转换成对应的年月日等
+gmtime();
+将对应的一个秒数，转换成对应的年月日等具体时间
+struct tm *gmtime(const time_t *timep);
+struct tm {
+               int tm_sec;         /* seconds */
+               int tm_min;         /* minutes */
+               int tm_hour;        /* hours */
+               int tm_mday;        /* day of the month */
+               int tm_mon;         /* month */
+               int tm_year;        /* year */
+               int tm_wday;        /* day of the week */
+               int tm_yday;        /* day in the year */
+               int tm_isdst;       /* daylight saving time */
+           };
+
+
+2目录操作
+
+DIR *opendir(const char *name);
+参数：
+	name --》 目录名
+返回值：
+	成功：目录指针
+	失败：NULL
+
+
+struct dirent *readdir(DIR *dirp);
+参数：opendir的返回值
+
+返回值：
+		成功：结构体指针
+		失败：NULL
+
+struct dirent {
+    ino_t          d_ino;       /* inode number */
+    off_t          d_off;       /* offset to the next dirent */
+    unsigned short d_reclen;    /* length of this record */
+    unsigned char  d_type;      /* type of file; not supported
+                                   by all file system types */
+    char           d_name[256]; /* filename */
+};
+
+
+
+
+
+
+
+
+
+
+
+
+

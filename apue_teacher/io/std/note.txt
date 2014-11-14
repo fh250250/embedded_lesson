@@ -1,0 +1,245 @@
+
+Unix 环境高级编程
+
+IO
+	标准io fopen fread fwrite printf scanf
+	系统io open read write ....
+	高级io 
+文件属性 目录操作
+进程环境
+进程属性
+信号--> 正整数
+线程
+进程间通信
+	管道：有名管道/无名管道
+	XSI
+		共享内存
+		消息队列
+		信号量
+	inet
+		tcp udp...
+
+标准io
+
+FILE *fopen(const char *path, const char *mode);
+参数：
+	path：目录名
+	mode:权限
+		r:以读方式打开，文件指针在文件开始位置
+		r+:以读写方式打开，文件指针在文件开始位置
+		w:以只写方式打开，若文件存在清空，不存在创建，文件指针文件开始位置
+		w+:读写方式打开，同w
+		a:追加（写在文件末尾），
+		a+:第一次读操作，文件指针文件开始位置
+				第一次写操作，文件指针文件末尾
+ 
+			打开方式	能否创建		是否清空 	文件指针位置
+	r			只读			no					no				文件开始
+	r+		读写			no					no				文件开始
+	w			只写			yes					yes				文件开始
+	w+		读写			yes					yes				文件开始
+	a			只写			yes					no				文件末尾
+	a+		读写			yes					no				第一次读操作：文件开始
+																							写操作：文件末尾
+返回值：
+		成功：返回对应的文件指针
+		失败：NULL
+
+文件读写
+
+1.putchar()/getchar()
+
+返回值：
+	成功：对应的字符ascii码值
+	失败/文件尾:-1
+
+fgetc/fputc
+int fgetc(FILE *stream);
+	参数：文件指针
+	返回值：
+		成功 ascii码值
+		失败/文件尾 -1
+
+fgetc(stdin) == getchar()
+
+int fputc(int c, FILE *stream);
+
+
+#./a.out file file1
+
+fgets/fputs
+char *fgets(char *s, int size, FILE *stream);
+	参数：
+		s:将文件放到内存中的哪个位置
+		size：缓冲区的大小
+			1.缓冲区小 有效数据size-1 size ‘\0’
+			2.缓冲区大 读取'\n',并且在'\n'后添加'\0'
+			3.EOF
+		stream：从文件哪个位置读内容
+
+	返回值
+		成功：同s
+		失败：NULL
+buf[6]
+
+“0123456789\n”
+
+
+int fputs(const char *s, FILE *stream);
+
+
+gets/puts
+
+char *gets(char *s);
+不读回车
+abcd\n
+s=abcd
+返回值：成功：对应字符串的首地址
+				失败：NULL
+
+int puts(const char *s);
+输出自动添加回车
+返回值：成功：非负数
+				失败：-1
+
+gets
+	结束条件
+		1.遇到‘\n’
+		2.遇到文件结束标志
+fgets
+	结束条件
+		1.缓冲区满 size-1
+		2.遇到'\n'
+		3.遇到文件结束标志
+
+练习
+	只能用于拷贝文本文件 不能拷贝二进制文件
+	用fgets 和fputs 实现mycp
+	
+	#./mycp srcfile destfile
+
+
+
+fread/fwrite
+
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
+参数
+	ptr：缓冲区
+	size：一次写多少个字节
+	nmemb：写多少次
+	stream：从文件哪个位置读
+
+返回值：
+	成功：成功读到的份数
+		total：10
+		size： 3
+		return：3
+
+size_t fwrite(const void *ptr, 
+							size_t size, 
+							size_t nmemb,
+							FILE *stream);
+
+实现mycat(用fread/fwrite实现)
+
+	1)#mycat
+		#mycat file
+
+文件定位函数
+
+fseek
+rewind
+ftell
+
+int fseek(FILE *stream, long offset, int whence);
+
+参数：
+	stream：操作文件对应的指针
+	offset：相对于whence的偏移量
+	whence：SEEK_SET
+					SEEK_CUR
+					SEEK_END
+	fseek(fp, 10, SEEK_CUR)
+
+	fseek(fp, 0, SEEK_END);	
+
+返回值：
+	成功：0
+	失败：-1
+
+
+功能:将文件指针移到文件开始位置
+void rewind(FILE *stream);
+	fseek(stream, 0, SEEK_SET);
+
+返回当前的文件指针偏移量
+long ftell(FILE *stream);
+
+getline()
+功能：每次获取一行
+ssize_t getline(char **lineptr, 
+									size_t *n, 
+										FILE *stream);
+
+参数：
+	lineptr:
+	n:
+	stream:操作的文件指针
+
+返回值：
+
+
+scanf/printf
+
+从第一个参数即字符串中获取内容
+sscanf
+int sscanf(const char *str, const char *format, ...);
+
+从文件中获取内容
+fscanf
+int fscanf(FILE *stream, const char *format, ...);
+
+sprintf
+将字符中的内容存储到str中
+int sprintf(char *str,  const  char  *format,...);
+
+
+将字符串中的内容写到文件中
+fprintf
+int fprintf(FILE *stream, const char *format,
+       ...);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+录    

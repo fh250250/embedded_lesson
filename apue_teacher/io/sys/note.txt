@@ -1,0 +1,163 @@
+系统io
+
+scanf					//从键盘读数据
+	sscanf			//从字符串中读数据	----》   		存到变参对应的位置
+	fscanf			//从文件中读数据
+
+printf														写到标准输出 屏幕
+	sprintf													写到字符型数组
+	fprintf													写到文件中
+
+
+
+
+ctrl+n
+
+int open(const char *pathname, int flags);
+
+参数
+	pathname:文件的目录或名字
+	flag：文件打开权限
+		有且只能有一个
+		O_RDONLY	只读
+		O_WRONLY	只写
+    O_RDWR		读写
+	
+	./cp src dest
+	
+		可以包含多个，也可以不包含
+		O_CREAT		创建
+    O_EXCL		
+		O_TRUNC		如果文件内有内容，将文件截断为0
+		O_APPEND
+返回值：
+	成功：>= 0文件描述符 
+	失败：-1
+
+从文件中获取内容
+ssize_t write(int fd, 
+								const void *buf, 
+										size_t count);	
+
+参数
+	fd：向fd所指向的文件写内容
+	buf：从buf中读数据
+	count：写的大小
+返回值：
+	成功>=0 成功写入文件中的字节数
+	失败:-1
+		
+从文件中读内容，放入buf中
+ssize_t read(int fd, void *buf, size_t count)
+参数
+	fd：从哪个文件中读数据
+	buf：写到内存中哪个位置
+	count：最大可以写入内存中的数值
+返回值：
+	成功：>0返回成功读到的字节数
+				=0 到文件末尾
+	失败：=-1
+
+
+#mycp srcfile destfile
+	
+srcfile：
+		open O_RDONLY
+		
+destfile
+		open O_WRONLY|O_TURN|O_CREAT 0644
+
+
+#mycat
+	
+缓冲区
+
+行缓冲：
+	屏幕
+		将缓冲区中内容刷新
+		1.遇到'\n'
+		2.缓冲区满--> 缓冲区大小 1024字节
+		3.fflush()
+		4.程序正常终止
+
+全缓冲
+	文件
+		1.缓冲区满	
+		2.fflush
+		3.程序正常终止
+
+无缓冲
+	标准出错
+		stderr
+		
+
+有缓冲的效率高于无缓冲
+
+
+					文件描述符		文件指针
+标准输入		0							stdin
+标准输出		1							stdout
+标准出错		2							stderr
+
+write/read--->没有缓冲区
+
+
+lseek
+off_t lseek(int fd, 
+							off_t offset,  
+								int	whence);
+参数：
+		fd：操作的文件描述符
+		offset：相对于第三个参数的偏移量
+		whence
+			SEEK_SET：文件开始
+			SEEK_CUR:文件当前位置
+			SEEK_END:文件结尾
+返回值：
+	成功：偏移量
+	失败：-1
+
+1.文件描述符的复制
+dup/dup2
+
+dup
+功能：复制一个文件描述符，新文件描述符从返回值返回
+int dup(int oldfd);
+参数：
+	oldfd：要复制的文件描述符
+返回值：
+	成功：新文件描述符（复制好的文件描述符）
+	失败：-1
+
+dup2()
+int dup2(int oldfd, int newfd);
+参数：
+	oldfd：要复制的文件描述符
+	newfd：指定的新文件描述符
+			1)newfd之前未被打开，将其打开，并和oldfd指向文件
+形成一种映射关系
+			2)newfd之前已经被打开，先将其关闭，之后操作同1
+返回值：
+	成功：新文件描述符
+	失败：-1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

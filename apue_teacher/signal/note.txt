@@ -1,0 +1,173 @@
+
+信号
+
+中断
+
+正整数
+
+SIGPIPE 管道的读端彻底关闭，向管道中写数据
+SIGINT  ctrl+c 
+SIGQUIT ctrl+\
+SIGABRT 调用abort 函数时产生此信号
+SIGFPE	算数运算异常，例如/0
+SIGSEGV	段错误
+SIGALRM 当alarm()闹钟超时时
+SIGCHLD 当子进程结束后，会向其父进程发送此信号
+				默认动作 忽略该信号
+
+
+不能被捕捉和忽略,提供了一种可靠的杀死进程的方法
+SIGKILL
+SIGSTOP
+
+signal
+
+信号处理函数
+typedef void (*sighandler_t)(int);
+sighandler_t signal(int signum, sighandler_t handler);
+参数：
+	signum：要处理的是哪个信号
+	handler：信号处理方式
+						SIG_IGN			忽略
+						SIG_DFL			默认
+						fun					捕捉
+返回值：
+	成功：返回的为上一次注册函数的地址
+	失败：SIG_ERR
+
+	signal(SIGINT, fun1);
+	signal(SIGINT, fun2);
+	signal(SIGINT, fun3);
+
+
+练习：
+	每秒钟打印一个‘.’
+	每五个一行
+	产生SIGINT，打印"hello world!\n"
+
+
+
+闹钟
+unsigned int alarm(unsigned int seconds);
+参数：
+	seconds:设置闹钟超时时间
+返回值：
+	返回上一次闹钟的剩余秒数
+
+练习
+	用闹钟实现 每秒钟打印 hello world
+
+删除闹钟
+alarm(0)
+
+收尸方式
+	1.父进程退出，会为其所有退出的子进程收尸
+	2.wait/waitpid
+	3.SIGCHLD
+
+kill
+
+int kill(pid_t pid, int sig);
+参数：
+	pid：向哪个进程发送信号
+	sig：向该进程发送哪个信号
+返回值：
+	成功： 0
+	失败：-1
+
+"ps -eo comm,pid"
+popen(" ")
+
+
+int pause(void);
+失败返回-1
+
+练习：
+slow_cat.c
+1.从文件中读数据，每秒钟向屏幕打印10byte
+2.使用pause
+
+信号集
+
+//清空信号集，不包含任何信号
+int sigemptyset(sigset_t *set);
+
+//信号集里面包含所有信号
+int sigfillset(sigset_t *set);
+
+//将信号signum添加到信号集set中
+int sigaddset(sigset_t *set, int signum);
+
+//将信号signum从信号集set中删除
+int sigdelset(sigset_t *set, int signum);
+
+//检查signum是否在信号集set中
+int   sigismember(const  sigset_t  *set,  int
+								signum);
+
+
+设置信号屏蔽字
+不能被屏蔽
+SIGSTOP/SIGKILL
+
+int sigprocmask(int how, 
+									const sigset_t *set,
+       							sigset_t *oldset);
+参数：
+	how
+		set为非空
+		SIG_BLOCK：将set中的信号添加到系统的信号屏蔽字中
+		SIG_UNBLOCK:如果set中的信号在系统的信号屏蔽字中，将其删除
+		SIG_SETMASK：将set中的信号设置为系统的信号屏蔽字
+	set
+	oldset:
+		如果oldset非空，将之前的信号屏蔽字添加到oldset中	
+
+//获取未决的信号
+在信号屏蔽期间，获取到来的信号
+int sigpending(sigset_t *set);
+参数：
+		屏蔽期间到达的被屏蔽信号存储在set中
+返回值：
+	成功：0
+	失败：-1
+
+int sigsuspend(const sigset_t *mask);
+
+signal();
+
+int sigaction(int signum, 
+								const struct sigaction *act,
+                     struct sigaction *oldact);
+
+参数：
+	signum:信号
+	struct sigaction
+		struct sigaction {
+				//信号处理函数--》参照signal第二个参数
+        void     (*sa_handler)(int);
+				//将属性设置为SA_SIGINFO时，处理函数为sa_sigaction
+        void     (*sa_sigaction)(int, siginfo_t *, void *);
+     		//在信号处理函数执行过程中所屏蔽的信号
+		    sigset_t   sa_mask;
+				//属性
+        int        sa_flags;
+        void     (*sa_restorer)(void);
+           };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,117 @@
+
+进程间通
+
+管道
+有名管道 
+无名管道：有亲属关系的进程
+		（父子进程，兄弟进程，有公共祖先的进程）
+
+创建管道
+int pipe(int pipefd[2]);
+参数：
+		pipefd[0]:读端
+		pipefd[1]:写端
+返回值：
+		成功：0
+		失败：-1
+
+1.首先是读操作，还没有写端向管道中写数据
+		阻塞到read，直到有写端写入数据
+2.首先是写操作，还没有读端读取管道中数据
+		一直向管道中写数据，直到管道满或者写操作结束
+
+3.写端彻底关闭，从管道读数据	
+		将管道中数据读出，read返回0
+4.读端彻底关闭，向管道中写数据
+		发送SIGPIPE
+
+练习1：
+	由父进程向子进程发送数据
+	每秒钟发送一次 hello world!
+	
+练习2：
+	从子进程向父进程传输文件
+	子进程：open
+					read()
+					write()
+
+	父进程：read()
+					write()
+
+有名管道
+管道文件
+	mkfifo
+int mkfifo(const char *pathname, mode_t mode);
+参数：
+	pathname:所要创建的文件或目录
+	mode:文件权限
+返回值：
+	成功：0
+	失败：-1
+
+open()
+
+read()
+write()
+
+1.管道写进程结束，从管道文件中读数据	
+	read返回0值
+
+2.管道的读进程结束，向管道中写数据
+	产生SIGPIPE
+
+popen
+FILE *popen(const char *command, const char *type);
+参数：
+	command:命令
+	type
+		"r"：返回的是一个可读的文件指针
+		"w"：返回的尸一个可写的文件指针
+
+FILE*
+	成功：FILE* 命令的执行结果
+	失败：NULL
+
+
+
+FILE *popen(comman, type)
+{
+	pipe()
+	pid = fork()
+	pid == 0
+	{
+		if(type == r){
+			//将原本打印到标准输出的内容写到管道的写端
+			dup2([1], 1)
+		}
+		if(type == w){
+			dup2([0], 0)
+		}
+		exec();
+	}
+	pid > 0
+	{
+		//将文件描述符转换成对应的指针
+		fdopen();
+	}
+}
+
+将对应的文件描述符转换成文件指针
+FILE *fdopen(int fd, const char *mode);
+
+system();
+int system(const char *command);
+
+
+批处理
+	将当前目录下的所有文件 拷贝到/tmp/pipe
+	并且所有文件名加前缀
+	1_pipe.c    my_1_pipe.c
+
+//	sprintf/strcat
+
+
+
+
+
+

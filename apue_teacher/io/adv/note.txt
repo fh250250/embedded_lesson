@@ -1,0 +1,99 @@
+非阻塞io
+
+int fcntl(int fd, int cmd, ... /* arg */ );
+
+参数：
+	fd：文件对应的文件描述符
+	cmd：对文件的具体操作
+		F_GETFL：获取文件属性
+		F_SETFL：设置文件属性
+	arg：
+		当cmd=F_GETFL：arg被忽略
+			cmd=F_SETFL：要设置的新文件属性
+返回值：
+	F_GETFL：
+		成功：返回文件属性
+		失败：-1
+	F_SETFL
+		成功：返回0
+		失败：-1
+
+errno
+
+功能：将错误编码翻译成对应的字符串
+char *strerror(int errnum);
+参数
+	errnum:程序出现异常后产生的错误编码
+
+返回值：
+	返回翻译之后的错误信息的首地址
+
+int select(int nfds, 
+						fd_set *readfds, 
+							fd_set *writefds,
+                fd_set *exceptfds, 
+									struct timeval *timeout);
+
+参数：
+	nfds:maxfd+1
+		例如要监控文件描述符：0 ，2 ，12
+												nfds = 13
+	readfds:要监控读文件描述符（关心）的集合
+	writefds：要监控写文件描述符（关心）的集合	
+	exceptfds：要监控发生异常文件描述符的集合
+
+	timeout：超时时间
+	 struct timeval {
+         long    tv_sec;         /* seconds */
+         long    tv_usec;        /* microseconds */
+         };
+	
+	1 timeout==NULL 无限期等待
+	2 timeout.tv_sec == 0 && timeout.tv_usec == 0 不等待，立即返回
+	3 timeout.tv_sec != 0 || timeout.tv_usec != 0 等待对应的时间
+
+将fd从set集合删除
+void FD_CLR(int fd, fd_set *set);	
+判断fd是否在集合set中
+int  FD_ISSET(int fd, fd_set *set);
+将fd添加到set中
+void FD_SET(int fd, fd_set *set);
+将集合清空
+void FD_ZERO(fd_set *set);
+
+返回值：
+		>0	发生关心事件的个数
+		=0	所关心的事件没有发生
+		<0	发生错误
+
+
+int poll(struct pollfd *fds, 
+							nfds_t nfds, 
+								int timeout);
+
+参数：
+	fds：结构体数组
+		struct pollfd {
+         int   fd;         /* file descriptor */
+         short events;     /* requested events */
+         short revents;    /* returned events */
+     };
+	nfds：结构体成员数量
+	timeout：单位/毫秒
+		> 0	等待对应的秒数
+		= 0	不等待，立即返回
+		< 0	无限期等待
+
+
+
+
+
+
+
+
+
+
+
+
+
+

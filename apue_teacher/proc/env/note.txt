@@ -1,0 +1,135 @@
+1.进程：
+	正在执行的程序-->动态
+程序
+	静态
+
+2.进程地址的划分
+	
+	4G	---》2^32-1
+											kernel
+	3G 0xc0 00 00 00
+
+											user
+
+	0
+
+3
+	高
+			stack---》局部变量（非静态）函数行参 返回地址
+			heap	--》
+			bss		--》未初始化的静态局部变量和全局变量
+			data	--》初始化的...
+			text	
+	低
+
+//extern int a;
+
+
+
+4 进程的终止
+
+	main()调用return
+	
+	exit(){
+		close(fd)
+		free()
+		atexit()-->注册函数
+		fflush()
+		_exit()
+	}
+
+	//直接进入内核 结束程序
+	_Exit
+	_exit
+
+5 注册函数
+int atexit(void (*function)(void));
+	
+	函数调用：立即跳到对应位置执行
+	注册函数：满足一定条件后，到对应位置执行
+
+6 命令行参数
+
+7 环境变量
+
+	extern char **environ;
+
+	int main(int argc, char *argv[], char *envp[]);
+
+	name = value/path
+
+
+获取指定环境变量的值
+	char *getenv(const char *name);
+	参数：name
+	返回值：
+		成功：value
+		失败：NULL
+将指定的环境变量添加到对应的表项中
+	int putenv(char *string);
+	参数：
+		string：name=value
+	返回值：
+		成功： =0
+		失败：!=0
+static
+	1.局部变量：延长生存周期，从定义位置开始，到程序终止结束。使值延续的作用
+	2.全局变量：只能被当前文件使用，不能被其他文件引用,限定作用域
+	3.函数：只能被当前文件使用，不能被其他文件使用
+extern
+	引用外部变量
+
+
+goto
+	
+一般将jmp_buf定义为全局变量
+
+
+int setjmp(jmp_buf env);
+
+参数
+	env：获取setjmp地址
+返回值：
+	 =0 顺序执行
+	!=0 从longjmp返回
+
+void longjmp(jmp_buf env, int val);
+
+参数：
+	env：setjmp地址
+	val：setjmp返回值
+
+exec
+
+strsep()
+char *strsep(char **stringp, const char *delim);
+
+参数
+		stringp 待分割的字符串
+		delim		分割符
+返回值
+		分割后的字符串
+		NULL 分割结束
+
+当字符串中有多个连续分割符，产生空串
+空串  	""
+空白串 	" "
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,99 @@
+
+进程组
+	多个进程的集合
+	进程组id 
+			等于进程组的组长id
+	进程组消亡
+			进程中所有进程都退出
+
+1.获取进程的组id
+
+pid_t getpgrp(void);
+返回值：该进程所在的进程组id
+
+pid_t getpgid(pid_t pid);
+参数：
+		pid：进程id
+
+返回值：
+		返回pid所在的进程组id
+
+getpgid(0) == getpgrp(); 
+				
+2 
+创建一个进程组，并且调用该函数的进程为组长进程
+int setpgrp(void);
+返回值：
+	成功：0
+	失败：-1
+
+int setpgid(pid_t pid, pid_t pgid);
+参数
+	1 pid==pgid==0  setpgrp()
+	2 pid==pgid!=0	创建一个进程组，并且pid为组长进程
+	3 pid!=pgid			将pid加入pgid进程组中
+
+会话
+	多个进程组的集合
+
+获取会话id
+pid_t getsid(pid_t pid);
+参数：
+	pid =0 返回调用该函数的进程所在的会话id
+	pid!=0 返回的是进程id为pid，所在的会话id
+
+返回值：
+	成功：上述两种
+	失败：-1
+	
+创建会话
+组长进程不能调用该函数
+pid_t setsid(void);
+返回值：
+	成功：新创建的会话id	
+	失败：-1
+
+1.脱离原会话
+2.脱离原进程组
+3.脱离原终端
+
+int chdir(const char *path);
+参数
+	path 新工作路径的位置
+返回值
+	成功  0
+	失败 -1
+
+守护进程
+	
+1.释放终端的使用权
+		父进程终止，子进程执行
+2.脱离原终端
+	脱离原会话
+	脱离原进程组
+		setsid()	
+3.更改工作目录为根目录
+	chdir("/");
+4.不屏蔽任何权限
+	umask(0)
+5.
+	
+	dup2("/dev/null", 0)
+	dup2("/dev/null", 1)
+	dup2("/dev/null", 2)
+
+6.关闭所有文件描述符
+
+1.创建/tmp/file.log
+2.每秒钟向文件中写 0-9 的随机值
+
+
+
+
+
+
+
+
+
+
+
