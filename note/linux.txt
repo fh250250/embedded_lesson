@@ -12,3 +12,17 @@ ar cqs libfun.a fun.o
 
 生成动态库
 gcc -shared -Wall -fPIC fun.o -o libfun.so
+                    |
+					v
+                 位置无关
+
+
+指定代码段起始地址
+gcc -Ttext=0xb0000000
+
+反汇编
+objdump -d 
+
+
+加载链接库的路径
+export LD_LIBRARY_PATH=./
