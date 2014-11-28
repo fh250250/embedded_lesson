@@ -12,7 +12,7 @@ int main(int argc, char* argv[]){
 
 	int i;
 	for (i = 0; i < 5; i++) {
-		if(insert_list(plist, i, i)){
+		if(insert_list(plist, i, 10-i)){
 			printf("insert to the list failure\n");
 			exit(EXIT_FAILURE);
 		}
@@ -23,7 +23,11 @@ int main(int argc, char* argv[]){
 	
 	print_list(plist);
 
-	plist = reverse_list(plist);
+	// plist = reverse_list(plist);
+
+	// print_list(plist);
+
+	sort_list(plist);
 
 	print_list(plist);
 

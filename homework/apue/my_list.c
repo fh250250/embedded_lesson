@@ -81,3 +81,47 @@ list_t* reverse_list(list_t* head){
 	head->next = tail;
 	return head;
 }
+
+
+int sort_list(list_t* head){
+	if(head == NULL || head->next == NULL){
+		return ERR_ARG;
+	}
+
+	list_t* sorted_list = NULL;
+	node_t* sorted_list_tail = NULL;
+
+	node_t* cur;
+	node_t* min_prev;
+
+
+	while(head->next){
+
+		cur = head;
+		min_prev = head;
+
+		while(cur->next){
+			if(cur->next->data < min_prev->next->data){
+				min_prev = cur;
+			}
+
+			cur = cur->next;
+		}
+
+		cur = min_prev->next;
+		min_prev->next = cur->next;
+
+		if(sorted_list == NULL){
+			sorted_list = cur;
+		}else {
+			sorted_list_tail->next = cur;
+		}
+
+		sorted_list_tail = cur;
+
+	}
+
+	head->next = sorted_list;
+
+	return 0;
+}

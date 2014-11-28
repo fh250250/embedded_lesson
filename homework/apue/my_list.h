@@ -35,4 +35,12 @@ void print_list(list_t* list);
  */
 list_t* reverse_list(list_t* head);
 
+
+/**
+ * 排序链表
+ * @param  head 头结点
+ * @return      成功返回０
+ */
+int sort_list(list_t* head);
+
 #endif
