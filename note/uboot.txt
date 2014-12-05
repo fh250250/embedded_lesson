@@ -1,0 +1,2 @@
+set bootcmd 'fatload mmc 0:1 40008000 zImage;fatload mmc 0:1 41000000 ramdisk-u.img;bootm 40008000 41000000'
+set bootargs 'console=ttySAC0,115200 root=/dev/nfs rw nfsroot=192.168.0.10:/nfsroot ip=192.168.0.20:192.168.0.10:192.168.0.1:255.255.255.0'
