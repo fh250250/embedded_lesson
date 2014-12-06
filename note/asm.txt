@@ -30,3 +30,17 @@ gt   >
 ge   >=
 
 
+@ r1地址处的数据放到r0
+ldr r0, [r1]
+
+ldr r0, [r1, #4]  @ r0 = *(r1 + 4)
+
+ldr r0, [r1, #4]! @ r0 = *(r1 + 4), r1 = r1 + 4
+
+ldr r0, [r1], #4  @ r0 = *r1, r1 = r1 + 4
+
+
+
+ldrb / ldrh / ldr
+strb / strh / str
+1      2      4

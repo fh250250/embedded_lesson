@@ -26,3 +26,7 @@ objdump -d
 
 加载链接库的路径
 export LD_LIBRARY_PATH=./
+
+
+去掉头
+arm-linux-objcopy -I elf32-littlearm -O binary hello hello.bin

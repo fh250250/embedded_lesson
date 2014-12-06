@@ -1,0 +1,49 @@
+配置minicom：
+Serial port setup
+    | A -    Serial Device      : /dev/ttyUSB0
+    | B - Lockfile Location     : /var/lock  
+    | E -    Bps/Par/Bits       : 115200 8N1
+    | F - Hardware Flow Control : No       
+    | G - Software Flow Control : No
+Save setup as dfl
+
+安装交叉编译器：
+tar -xvf arm-linux-gcc-4.5.1-v6-vfp-20120301.tgz -C /
+export PATH=/opt/FriendlyARM/toolschain/4.5.1/bin/:$PATH
+
+编译u-boot:
+tar -xvf uboot_tiny4412-20130729.tgz
+make tiny4412_config
+vim include/configs/tiny4412.h
+311 //#define CONFIG_ENABLE_MMU
+vim board/samsung/tiny4412/config.mk
+0xc3e00000 -> 0x43e00000
+make
+make -C sd_fuse/
+./sd_fusing.sh /dev/mmcblk0
+
+启动NFS服务：
+mkdir /nfsroot
+tar -xvf rootfs_qt.tar.gz -C /nfsroot/
+vim /etc/exports
+/nfsroot *(rw,sync,no_root_squash,no_subtree_check)
+/etc/init.d/nfs restart
+
+关防火墙：
+sudo service iptables stop
+chkconfig iptables off
+chkconfig nfs on
+setenfore 0
+vim /etc/selinux/config
+
+
+编译内核：
+ARCH            ?= arm
+CROSS_COMPILE   ?= arm-none-linux-gnueabi-
+cp tiny4412_linux_defconfig .config
+make
+
+配置u-boot参数：
+set bootargs 'console=ttySAC0,115200 root=/dev/nfs rw nfsroot=192.168.0.10:/nfsroot ip=192.168.0.20:192.168.0.10:192.168.0.1:255.255.255.0'
+set bootcmd 'fatload mmc 0:1 40008000 zImage;fatload mmc 0:1 41000000 ramdisk-u.img;bootm 40008000 41000000'
+save
