@@ -44,3 +44,53 @@ ldr r0, [r1], #4  @ r0 = *r1, r1 = r1 + 4
 ldrb / ldrh / ldr
 strb / strh / str
 1      2      4
+
+
+
+
+APCS // arm process call standard
+
+r0		a1-----> 参数传递,被调用过程不需要备份,返回值通过r0返回
+r1		a2 |
+r2		a3 |
+r3		a4--
+
+r4		v1-----------> 保存局部变量,被调用过程需要备份
+r5		v2  |
+r6		v3  |
+r7		v4  |
+r8		v5  |
+r9		v6  |
+r10		v7  |
+r11		v8(fp)
+
+r12		ip------> 存放临时值
+r13		sp------> 栈指针
+r14		lr------> 链接寄存器
+r15		pc------> 程序计数器
+
+
+栈：
+	满栈
+	空栈
+	ldm/stm
+	fa, 满递增
+	fd, 满递减
+	ea, 空递增
+	ed, 空递减
+
+
+stmfd sp!, {register_list}
+// 实现
+ldmfd sp!, {register_list}
+
+
+
+.section			定义段
+.global				声明全局符号
+.word				字
+.byte				字节
+.asciz				存放字符串
+.ascii				存放字符数组
+.equ name, value 	汇编宏定义
+.align N			2^N对齐

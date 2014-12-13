@@ -2,5 +2,17 @@
 	.global _start
 
 _start:
-	mov r0, r0	@ nop
-	mov pc, lr
+	stmfd sp!, {r4, lr}
+	
+	ldr r0, =str
+	ldr r4, =0x43e11434
+	mov lr, pc
+	bx  r4
+
+	ldmfd sp!, {r4, pc}
+
+
+str:
+	.asciz "Hello, World!\n"
+
+
