@@ -89,6 +89,11 @@ write --> syscall --> swi/svc
 
 b  label
 bl label 会将返回地址保存到lr中
+跳转正负32M
+
+
+bx r0		r0里是地址，跳到r0里的地址上
+blx r0		跳到r0里的地址上并且保存返回地址到lr内
 
 
 APCS:
@@ -100,3 +105,62 @@ APCS:
 栈的操作指令：(fd)
 push {r0,r1,r3-r5}		大号寄存器的数据先入栈
 pop  {r1,r2,r5-r7}		高地址的数据放到大号寄存器中
+
+
+
+内存块操作指令
+
+ldr r0, [r1]		r0 = *r1
+ldr r0, [r1, #4]	r0 = *(r1 + 4)
+ldr r0, [r1, #4]!	r1 += 4; r0 = *r1
+ldr r0, [r1], #4	r0 = *r1; r1 += 4
+
+ldr		4B
+ldrh	2B
+ldrb	1B
+
+str r0, [r1]		*r1 = r0
+同上
+
+
+内存连续操作指令:
+
+flags: fa fd ea ed
+
+            地址
+ldm{flags}   r0, {r1-r4,r6}
+ldm{flags}   r0!, {r1-r4,r6}	// 地址改变
+
+stm{flags}   r0, {r1-r4,r6}
+stm{flags}   r0!, {r1-r4,r6}	// 地址改变
+
+
+ldmfd sp!, {r1-r5}		pop  {r1-r5}
+stmfd sp!, {r1-r5}		push {r1-r5}
+
+
+伪指令：
+
+ldr r0, =0x93872872
+
+
+
+
+=================================================
+汇编文件:
+
+预处理	  n      y
+		xxx.s	xxx.S
+
+
+
+	.global
+	
+	.text
+	
+	.data
+		.ascii
+		.asciz
+		.word
+		.short
+		.byte
