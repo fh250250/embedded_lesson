@@ -1,0 +1,18 @@
+1.嵌入式：
+	以应用为中心，计算机技术为基础，软件硬件可裁剪，适应应用系统，对
+	功能，可靠性，成本，体积，功耗等有严格要求的计算机系统.
+
+
+bootloader --> kernel --> rootfs --> app
+
+
+arm: armcore 协处理器 mmu cache(I,D) TCM(I,D)
+       |
+	   --> register ALU shifter
+
+
+
+ROM
+RAM: SRAM DRAM SDRAM(sync) DDR(double data rate)
+flash: nand nor emmc
+
