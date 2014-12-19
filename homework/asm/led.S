@@ -4,7 +4,7 @@
 _start:
 	push	{r4-r12,lr}
 
-	@ =================== init
+	@ ==================== init
 	ldr	r0, =GPM4CON
 	ldr r0, [r0]
 	ldr	r1, [r0]
@@ -17,11 +17,12 @@ _start:
 	ldr	r0, =GPM4DAT
 	ldr	r0, [r0]
 	ldr	r1, [r0]
-	mov	r2, #0xf
-	orr	r1, r1, r2
+	orr	r1, #0xf
 	str	r1, [r0]
 	
 	@ ====================
+agin:
+
 	mov	r4, #0
 loop:
 	cmp	r4, #4
@@ -62,6 +63,8 @@ loop:
 	add	r4, r4, #1
 	b	loop
 end_loop:
+
+	b	agin
 
 	pop		{r4-r12,pc}
 

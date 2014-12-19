@@ -45,3 +45,16 @@ arm-linux-ld xxx.o -o xxx -Ttext addr
 arm-linux-objcopy xxx -O binary xxx.bin
 
 
+===============================================================
+Makefile
+
+=		延时变量
+:=		立即变量
++=		追加（立即）
+?=		如果前面定义过则本次定义无效，否则有效（立即）
+
+$@		目标
+$^		依赖
+$<		第一个依赖
+
+make -C PATH		去指定路径make
